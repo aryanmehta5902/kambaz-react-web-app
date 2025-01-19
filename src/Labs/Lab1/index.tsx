@@ -256,7 +256,7 @@ Your favorite books (in no particular order)
 Please
 <a href="https://www.lipsum.com" id="wd-lipsum"> click here </a>
 to get dummy text<br/>
-<a href="https://www.lipsum.com" id="wd-github"> click here </a>
+<a href="https://github.com/aryanmehta5902/kambaz-react-web-app/tree/a1" id="wd-github"> click here </a>
 for GitHub Repository<br/>
   </form>
 </div>
