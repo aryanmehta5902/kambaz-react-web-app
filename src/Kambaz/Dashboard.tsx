@@ -18,7 +18,7 @@ export default function Dashboard() {
       <hr />
       <h2 id="wd-dashboard-published">Published Courses (12)</h2>
       <hr />
-      <Row xs={1} md={3} className="g-4">
+      <Row xs={1} md={4}  className="g-4">
         {courses.map(course => (
           <Col key={course.id} className="wd-dashboard-course">
             <Card className="h-100">
