@@ -1,127 +1,135 @@
+import React from 'react';
+import { Button, Form, Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
+import { FaCalendarAlt, FaTimes } from 'react-icons/fa';
+import BackgroundColors from '../../../Labs/Lab2/BackgroundColors';
+
 export default function AssignmentEditor() {
-    return (
-      <div id="wd-assignments-editor">
-        <label htmlFor="wd-name">Assignment Name</label><br />
-        <input id="wd-name" value="A1 - ENV + HTML" /><br /><br />
-        <textarea id="wd-description" rows={10} cols={40}>
-          The assignment is available online Submit a link to the landing page of
-        </textarea>
-        <br />
-        <table cellPadding={10}>
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-points">Points</label>
-            </td>
-            <td>
-              <input id="wd-points" value={100} />
-            </td>
-          </tr>
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-group">Assignment Group</label>
-            </td>
-            <td>
-              <select id="wd-group" defaultValue="ASSIGNMENTS">
-                <option value="ASSIGNMENTS">ASSIGNMENTS</option>
-                <option value="QUIZZES">QUIZZES</option>
-                <option value="PROJECTS">PROJECTS</option>
-              </select>
-            </td>
-          </tr>
+  return (
+    <Container className="mt-4">
+      <Form>
+        {/* Assignment Name */}
+        <Form.Group className="mb-4">
+          <Form.Label>Assignment Name</Form.Label>
+          <Form.Control type="text" defaultValue="A1" />
+        </Form.Group>
 
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-display-grade-as">Display Grade as</label>
-            </td>
-            <td>
-              <select id="wd-display-grade-as" defaultValue="Percentage">
-                <option value="Percentage">Percentage</option>
-                <option value="Points">Points</option>
-                <option value="Letter Grade">Letter Grade</option>
-              </select>
-            </td>
-          </tr>
-
-          {/* Submission Type */}
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-submission-type">Submission Type</label>
-            </td>
-            <td>
-              <select id="wd-submission-type" defaultValue="Online">
-                <option value="Online">Online</option>
-                <option value="On Paper">On Paper</option>
-                <option value="No Submission">No Submission</option>
-              </select>
-</td>
-</tr>
-<tr>
-   <td>          
-  <label>Online Entry Options</label> <br />
-  <input type="checkbox" id="wd-text-entry" />
-  <label htmlFor="wd-text-entry">Text Entry</label>
-  <br />
-
-  <input type="checkbox" id="wd-website-url" />
-  <label htmlFor="wd-website-url">Website URL</label>
-  <br />
-
-  <input type="checkbox" id="wd-media-recordings" />
-  <label htmlFor="wd-media-recordings">Media Recordings</label>
-  <br />
-
-  <input type="checkbox" id="wd-student-annotation" />
-  <label htmlFor="wd-student-annotation">Student Annotation</label>
-  <br />
-
-  <input type="checkbox" id="wd-file-upload" />
-  <label htmlFor="wd-file-upload">File Upload</label>
-  <br />
-
-            </td>
-          </tr>
-
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-assign-to">Assign To</label>
-            </td>
-            <td>
-              <input id="wd-assign-to" type="text" value="Everyone" />
-            </td>
-          </tr>
-
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-due-date">Due</label>
-            </td>
-            <td>
-              <input id="wd-due-date" type="date" value="2024-05-13" />
-            </td>
-          </tr>
-          <tr>
-            <td align="right" valign="top">
-              <label htmlFor="wd-available-from">Available from</label>
-            </td>
-            <td>
-              <input id="wd-available-from" type="date" value="2024-05-06" />
-              <span> Until </span>
-              <input id="wd-available-until" type="date" value="2024-05-20" />
-            </td>
-          </tr>
-        
-      </table>
-      <hr />
-      <table width="100%">
-        <tr>
-            <td align="right">
-                <button type="button" id="wd-buttons">Cancel</button>
-            <button type="button" id="wd-buttons">Save</button></td>
-        </tr>
-      </table>
       
+        <FormControl as="textarea" rows={15} defaultValue="The assignment is available online. Submit a link to the landing page of your Web application running on Netlify." />          
+          
+          
+          
         
-       
-    </div>
+
+        {/* Points */}
+        <Form.Group className="mb-4">
+          <Form.Label>Points</Form.Label>
+          <Form.Control type="number" defaultValue={100} />
+        </Form.Group>
+
+        {/* Assignment Group */}
+        <Form.Group className="mb-4">
+          <Form.Label>Assignment Group</Form.Label>
+          <Form.Select defaultValue="ASSIGNMENTS">
+            <option>ASSIGNMENTS</option>
+            <option>Reference Material</option>
+            <option>PPTs</option>
+          </Form.Select>
+        </Form.Group>
+
+        {/* Display Grade as */}
+        <Form.Group className="mb-4">
+          <Form.Label>Display Grade as</Form.Label>
+          <Form.Select defaultValue="Percentage">
+            <option>Percentage</option>
+            <option>GPA</option>
+            <option>Decimal</option>
+          </Form.Select>
+        </Form.Group>
+
+
+          <Form.Label>Submission Type</Form.Label>
+  
+
+        {/* Online Entry Options */}
+        <Form.Group className="mb-4">
+          <div className="border rounded p-3">
+          <Form.Select defaultValue="Online" className="mb-4">
+            <option>Online</option>
+            <option>Offline</option>
+          </Form.Select>
+            <p style={{ backgroundColor: 'white',color:'black' }} className="fw-bold mb-3">Online Entry Options</p>
+            <Form.Check type="checkbox" label="Text Entry" className="mb-2" />
+            <Form.Check type="checkbox" label="Website URL" defaultChecked className="mb-2" />
+            <Form.Check type="checkbox" label="Media Recordings" className="mb-2" />
+            <Form.Check type="checkbox" label="Student Annotation" className="mb-2" />
+            <Form.Check type="checkbox" label="File Uploads" />
+          </div>
+        </Form.Group>
+
+        {/* Assign Section */}
+        <Form.Label>Assign</Form.Label>
+        <Form.Group className="mb-4">
+          <div className="border rounded p-3">
+            <p className="fw-bold mb-3" style={{ backgroundColor: 'white', color:'black' }}>Assign to</p>
+            
+            {/* Assign to */}
+            <Form.Group className="mb-3">
+              <div className="border rounded p-2 d-flex justify-content-between align-items-center">
+                <span>Everyone</span>
+                <FaTimes className="text-muted" />
+              </div>
+            </Form.Group>
+
+            {/* Due Date */}
+            <Form.Group className="mb-3">
+              <Form.Label>Due</Form.Label>
+              <InputGroup>
+                <Form.Control
+                  type="datetime-local"
+                  defaultValue="2024-05-13T23:59"
+                />
+                <InputGroup.Text>
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+
+            {/* Available from/until */}
+            <Row>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Available from</Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type="datetime-local"
+                      defaultValue="2024-05-06T12:01"
+                    />
+                    <InputGroup.Text>
+                    </InputGroup.Text>
+                  </InputGroup>
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Until</Form.Label>
+                  <InputGroup>
+                    <Form.Control
+                      type="datetime-local"
+                    />
+                    <InputGroup.Text>
+                    </InputGroup.Text>
+                  </InputGroup>
+                </Form.Group>
+              </Col>
+            </Row>
+          </div>
+        </Form.Group>
+
+        {/* Buttons */}
+        <div className="d-flex justify-content-end gap-2">
+          <Button variant="light">Cancel</Button>
+          <Button variant="danger">Save</Button>
+        </div>
+      </Form>
+    </Container>
   );
 }
-  
