@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ListGroup, Button, Dropdown, DropdownButton } from 'react-bootstrap';
 import { BsGripVertical } from 'react-icons/bs'; // Import icons if used in the component
 import  LessonControlButtons from "./LessonControlButtons";

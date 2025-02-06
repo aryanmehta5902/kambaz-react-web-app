@@ -1,7 +1,6 @@
-import React from 'react';
+
 import { Button, Form, Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
-import { FaCalendarAlt, FaTimes } from 'react-icons/fa';
-import BackgroundColors from '../../../Labs/Lab2/BackgroundColors';
+import { FaTimes } from 'react-icons/fa';
 
 export default function AssignmentEditor() {
   return (
