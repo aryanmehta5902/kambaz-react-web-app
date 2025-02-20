@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, ListGroup, Form, Container, Row, Col } from "react-bootstrap";
 import { FaPlus, FaSearch } from "react-icons/fa";
 import { IoAddSharp } from "react-icons/io5";

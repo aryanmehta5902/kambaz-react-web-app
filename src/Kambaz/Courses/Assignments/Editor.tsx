@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Form, Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
 import { useParams, useNavigate } from 'react-router-dom';
