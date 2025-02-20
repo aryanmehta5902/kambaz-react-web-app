@@ -1,12 +1,17 @@
-
+import React from 'react';
 import { Button, ListGroup, Form, Container, Row, Col } from "react-bootstrap";
 import { FaPlus, FaSearch } from "react-icons/fa";
-import RightSideAddition from "./RightSideAddition";
-import LeftSideAddition from "./LeftSideAddition";
 import { IoAddSharp } from "react-icons/io5";
 import { BsGripVertical } from "react-icons/bs";
+import { useParams } from "react-router";
+import assignments from "../../Database/assignments.json"; // Import the JSON data
+import RightSideAddition from "./RightSideAddition";
+import LeftSideAddition from "./LeftSideAddition";
 
 export default function Assignments() {
+  const { cid } = useParams();
+  const courseAssignments = assignments.filter(assignment => assignment.course === cid);
+
   return (
     <Container id="wd-assignments">
       <Row className="justify-content-between my-3">
@@ -47,22 +52,22 @@ export default function Assignments() {
       </Row>
       <ListGroup>
         {
-          ["A1", "A2", "A3"].map((item, index) => (
+          courseAssignments.map((assignment) => (
             <ListGroup.Item
-              key={index}
+              key={assignment._id}
               className="d-flex justify-content-between align-items-center p-3"
               style={{ borderLeft: "5px solid green" }}
             >
               <div className="d-flex align-items-center">
                 <LeftSideAddition />
                 <div className="ms-3">
-                  <a href="#/Kambaz/Courses/1234/Assignments/123" className="text-decoration-none text-black">
-                    {item}
+                  <a href={`#/Kambaz/Courses/${cid}/Assignments/${assignment._id}`} className="text-decoration-none text-black">
+                    {assignment.title}
                   </a>
                   <p className="text-muted mb-0" style={{ backgroundColor: "inherit" }}>
                     <span style={{ color: "red", fontStyle: "normal" }}> Multiple Modules </span> |
-                    <b> Not Available</b> until May {6 + 7 * index} at 12:00 am |<br />
-                    <b>Due</b> May {13 + 7 * index} at 11:59 pm | 100 pts
+                    <b> Not Available</b> until May 6 at 12:00 am |<br />
+                    <b>Due</b> May 13 at 11:59 pm | 100 pts
                   </p>
                 </div>
               </div>
@@ -71,8 +76,6 @@ export default function Assignments() {
           ))
         }
       </ListGroup>
-
     </Container>
   );
 }
-

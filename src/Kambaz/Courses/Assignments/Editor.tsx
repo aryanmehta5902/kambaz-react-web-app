@@ -1,23 +1,45 @@
-
+import React from 'react';
 import { Button, Form, Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
 import { FaTimes } from 'react-icons/fa';
+import { useParams, useNavigate } from 'react-router-dom';
+import assignments from '../../Database/assignments.json';
 
 export default function AssignmentEditor() {
+  const { cid, aid } = useParams();
+  const navigate = useNavigate();
+  const assignment = assignments.find(assignment => assignment._id === aid);
+
+  if (!assignment) {
+    return <p>Assignment not found</p>;
+  }
+
+  const handleCancel = () => {
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
+
+  const handleSave = () => {
+    // Add save logic here if needed
+    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+  };
+
   return (
     <Container className="mt-4">
       <Form>
         {/* Assignment Name */}
         <Form.Group className="mb-4">
           <Form.Label>Assignment Name</Form.Label>
-          <Form.Control type="text" defaultValue="A1" />
+          <Form.Control type="text" defaultValue={assignment.title} />
         </Form.Group>
 
-      
-        <FormControl as="textarea" rows={15} defaultValue="The assignment is available online. Submit a link to the landing page of your Web application running on Netlify." />          
-          
-          
-          
-        
+        {/* Assignment Description */}
+        <Form.Group className="mb-4">
+          <Form.Label>Description</Form.Label>
+          <FormControl 
+            as="textarea" 
+            rows={15} 
+            defaultValue="The assignment is available online. Submit a link to the landing page of your Web application running on Netlify." 
+          />
+        </Form.Group>
 
         {/* Points */}
         <Form.Group className="mb-4">
@@ -45,18 +67,17 @@ export default function AssignmentEditor() {
           </Form.Select>
         </Form.Group>
 
-
-          <Form.Label>Submission Type</Form.Label>
-  
-
-        {/* Online Entry Options */}
+        {/* Submission Type */}
         <Form.Group className="mb-4">
-          <div className="border rounded p-3">
+          <Form.Label>Submission Type</Form.Label>
           <Form.Select defaultValue="Online" className="mb-4">
             <option>Online</option>
             <option>Offline</option>
           </Form.Select>
-            <p style={{ backgroundColor: 'white',color:'black' }} className="fw-bold mb-3">Online Entry Options</p>
+          <div className="border rounded p-3">
+            <p style={{ backgroundColor: 'white', color: 'black' }} className="fw-bold mb-3">
+              Online Entry Options
+            </p>
             <Form.Check type="checkbox" label="Text Entry" className="mb-2" />
             <Form.Check type="checkbox" label="Website URL" defaultChecked className="mb-2" />
             <Form.Check type="checkbox" label="Media Recordings" className="mb-2" />
@@ -69,8 +90,9 @@ export default function AssignmentEditor() {
         <Form.Label>Assign</Form.Label>
         <Form.Group className="mb-4">
           <div className="border rounded p-3">
-            <p className="fw-bold mb-3" style={{ backgroundColor: 'white', color:'black' }}>Assign to</p>
-            
+            <p className="fw-bold mb-3" style={{ backgroundColor: 'white', color: 'black' }}>
+              Assign to
+            </p>
             {/* Assign to */}
             <Form.Group className="mb-3">
               <div className="border rounded p-2 d-flex justify-content-between align-items-center">
@@ -87,8 +109,7 @@ export default function AssignmentEditor() {
                   type="datetime-local"
                   defaultValue="2024-05-13T23:59"
                 />
-                <InputGroup.Text>
-                </InputGroup.Text>
+                <InputGroup.Text></InputGroup.Text>
               </InputGroup>
             </Form.Group>
 
@@ -102,8 +123,7 @@ export default function AssignmentEditor() {
                       type="datetime-local"
                       defaultValue="2024-05-06T12:01"
                     />
-                    <InputGroup.Text>
-                    </InputGroup.Text>
+                    <InputGroup.Text></InputGroup.Text>
                   </InputGroup>
                 </Form.Group>
               </Col>
@@ -111,11 +131,8 @@ export default function AssignmentEditor() {
                 <Form.Group>
                   <Form.Label>Until</Form.Label>
                   <InputGroup>
-                    <Form.Control
-                      type="datetime-local"
-                    />
-                    <InputGroup.Text>
-                    </InputGroup.Text>
+                    <Form.Control type="datetime-local" />
+                    <InputGroup.Text></InputGroup.Text>
                   </InputGroup>
                 </Form.Group>
               </Col>
@@ -125,8 +142,12 @@ export default function AssignmentEditor() {
 
         {/* Buttons */}
         <div className="d-flex justify-content-end gap-2">
-          <Button variant="light">Cancel</Button>
-          <Button variant="danger">Save</Button>
+          <Button onClick={handleCancel} variant="light">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} variant="danger">
+            Save
+          </Button>
         </div>
       </Form>
     </Container>
