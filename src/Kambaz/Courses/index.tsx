@@ -10,11 +10,13 @@ import PeopleTable from './People/Table';
 import Quizzes from './Quizzes';
 import Zoom from './Zoom';
 import Piazza from './Piazza';
-import courses from '../Database/courses.json'; // Import the JSON data
+import AssignmentEditorViewOnly from "./Assignments/AssignmentEditorViewOnly";
+import { Navigate } from "react-router";
+import Settings from "../Settings";
 
-export default function Courses() {
+export default function Courses({ courses }: { courses: any[]; }) {
   const { cid } = useParams();
-  const course = courses.find((course) => course.id === Number(cid)); // Convert cid to number
+  const course = courses.find((course) => course._id === Number(cid)); 
   const { pathname } = useLocation();
   const currentSection = pathname.split("/")[4];
 
@@ -30,16 +32,20 @@ export default function Courses() {
           <CourseNavigation />
         </div>
         <div className="flex-fill">
-          <Routes>
-            <Route path="Home" element={<Home />} />
-            <Route path="Modules" element={<Modules />} />
-            <Route path="Assignments" element={<Assignments />} />
-            <Route path="Assignments/:aid" element={<AssignmentEditor />} />
-            <Route path="People" element={<PeopleTable />} />
-            <Route path="Piazza" element={<Piazza />} />
-            <Route path="Quizzes" element={<Quizzes />} />
-            <Route path="Zoom" element={<Zoom />} />
-          </Routes>
+        <Routes>
+                <Route path="/" element={<Navigate to="Home" />} />
+                <Route path="Home" element={<Home />} />
+                <Route path="Modules" element={<Modules />} />
+                <Route path="Piazza" element={<Piazza />} />
+                <Route path="Zoom" element={<Zoom/>} />
+                <Route path="Assignments" element={<Assignments />} />
+                <Route path="Assignments/:aid" element={<AssignmentEditor />} />
+                <Route path="Assignments/:aid/EditAssignment" element={<AssignmentEditorViewOnly />} />
+                <Route path="Quizzes" element={<Quizzes />} />
+                <Route path="People" element={<PeopleTable />} />
+                <Route path="Settings" element={<Settings />} />
+                <Route path="AssignmentEditor" element={<AssignmentEditor />} />
+              </Routes>
         </div>
       </div>
     </div>

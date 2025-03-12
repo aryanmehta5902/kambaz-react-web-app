@@ -1,36 +1,32 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { setCurrentUser } from "./reducer";
+import { useDispatch } from "react-redux";
+import * as db from "../Database";
+import { Button, FormControl } from "react-bootstrap";
 export default function Signin() {
-  return (
-    <div id="wd-signin-screen" className="container mt-5">
-      <h3>Sign in</h3>
-      <form>
-        <div className="mb-3">
-          <input
-            type="text"
-            id="username"
-            className="form-control"
-            placeholder="Username"
-          />
-        </div>
+    const [credentials, setCredentials] = useState<any>({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const signin = () => {
+    const user = db.users.find(
+      (u: any) => u.username === credentials.username && u.password === credentials.password);
+    if (!user) return;
+    dispatch(setCurrentUser(user));
+    navigate("/Kambaz/Dashboard");
+  };
 
-        <div className="mb-3">
-          <input
-            type="password"
-            id="password"
-            className="form-control"
-            placeholder="Password"
-          />
-        </div>
-
-        <div className="d-flex justify-content-between">
-          <Link id="wd-signin-btn" to="/Kambaz/Dashboard" className="btn btn-primary">
-            Sign in
-          </Link>
-          <Link id="wd-signup-link" to="/Kambaz/Account/Signup" className="link-primary">
-            Sign up
-          </Link>
-        </div>
-      </form>
-    </div>
-  );
-}
+return (
+    <div id="wd-signin-screen">
+        <h1>Sign in</h1>
+        <FormControl defaultValue={credentials.username}
+             onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+             className="mb-2" placeholder="username" id="wd-username" />
+      <FormControl defaultValue={credentials.password}
+             onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+             className="mb-2" placeholder="password" type="password" id="wd-password" />
+      <Button onClick={signin} id="wd-signin-btn" className="w-100" > Sign in </Button>
+      <Link id="wd-signup-link" to="/Kambaz/Account/Signup"> Sign up </Link>
+    
+</div>
+);}

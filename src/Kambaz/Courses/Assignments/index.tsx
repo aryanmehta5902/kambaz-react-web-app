@@ -1,80 +1,109 @@
-import { Button, ListGroup, Form, Container, Row, Col } from "react-bootstrap";
-import { FaPlus, FaSearch } from "react-icons/fa";
-import { IoAddSharp } from "react-icons/io5";
+import { Button, ListGroup } from "react-bootstrap";
+import { FaCaretDown } from "react-icons/fa6";
 import { BsGripVertical } from "react-icons/bs";
-import { useParams } from "react-router";
-import assignments from "../../Database/assignments.json"; // Import the JSON data
-import RightSideAddition from "./RightSideAddition";
-import LeftSideAddition from "./LeftSideAddition";
+import { IoEllipsisVerticalOutline } from "react-icons/io5";
+import { IoAddSharp } from "react-icons/io5";
+import AssignmentControll1 from "./AssignmentControlLeft";
+import AssignmentControll2 from "./AssignmentControlButtons";
+import { Link, useNavigate, useParams } from "react-router";
+import { deleteAssignment } from "./AssignmentReducer";
+import { useSelector, useDispatch } from "react-redux";
+
+import { HiMagnifyingGlass } from "react-icons/hi2";
+import { FaPlus } from "react-icons/fa";
+import ProtectedRoute from "../../ProtectedRoutes";
+
+
 
 export default function Assignments() {
+  console.log("here 1");
+  
   const { cid } = useParams();
-  const courseAssignments = assignments.filter(assignment => assignment.course === cid);
 
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleAddAssignment = () => {
+  
+    navigate(`/Kambaz/Courses/${cid}/AssignmentEditor`);
+  };
   return (
-    <Container id="wd-assignments">
-      <Row className="justify-content-between my-3">
-        <Col md={8}>
-          <div className="position-relative">
-            <FaSearch className="position-absolute" style={{ left: "10px", top: "50%", transform: "translateY(-50%)" }} />
-            <Form.Control
-              type="text"
-              placeholder="Search..."
-              className="form-control"
-              style={{ paddingLeft: "40px", height: "48px" }}
-            />
-          </div>
-        </Col>
-        <Col md={4} className="text-end">
-          <Button variant="secondary" className="me-2">
-            <FaPlus /> Group
-          </Button>
-          <Button variant="danger">
-            <FaPlus /> Assignment
-          </Button>
-        </Col>
-      </Row>
-
-      <Row className="mb-3">
-        <Col className="d-flex justify-content-between align-items-center border rounded p-2 bg-light">
-          <div className="d-flex align-items-center">
-            <BsGripVertical className="me-2 text-muted" />
-            <span className="fw-bold">ASSIGNMENTS</span>
-          </div>
-          <div className="d-flex align-items-center">
-            <span className="me-3 bg-white px-2 py-1 rounded border">40% of Total</span>
-            <Button variant="outline-secondary" size="sm">
-              <IoAddSharp />
+    <div id="wd-assignments">
+ 
+      <div className="row justify-content-between">
+        <div className="position-relative col-md-8">
+          <HiMagnifyingGlass className="position-absolute ms-2" style={{ margin: "0 auto", height: "100%", left: "12px" }} />
+          <input
+            type="text"
+            placeholder="Search..."
+            className="form-control wd-search-bar"
+            style={{ paddingLeft: "30px", height: "48px" }}
+          />
+        </div>
+        <div className="col-md-4">
+          <ProtectedRoute>
+            <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-assignment" onClick={handleAddAssignment} >
+              <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+              Assignment
             </Button>
-          </div>
-        </Col>
-      </Row>
-      <ListGroup>
-        {
-          courseAssignments.map((assignment) => (
-            <ListGroup.Item
-              key={assignment._id}
-              className="d-flex justify-content-between align-items-center p-3"
-              style={{ borderLeft: "5px solid green" }}
-            >
-              <div className="d-flex align-items-center">
-                <LeftSideAddition />
-                <div className="ms-3">
-                  <a href={`#/Kambaz/Courses/${cid}/Assignments/${assignment._id}`} className="text-decoration-none text-black">
-                    {assignment.title}
-                  </a>
-                  <p className="text-muted mb-0" style={{ backgroundColor: "inherit" }}>
-                    <span style={{ color: "red", fontStyle: "normal" }}> Multiple Modules </span> |
-                    <b> Not Available</b> until May 6 at 12:00 am |<br />
-                    <b>Due</b> May 13 at 11:59 pm | 100 pts
-                  </p>
-                </div>
+          </ProtectedRoute>
+          <Button variant="secondary" size="lg" className="me-1 float-end" id="wd-add-module-btn">
+            <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+            Group
+          </Button>
+        </div>
+      </div>
+
+      <div id="wd-asignment-main-section" className="wd-title p-3 ps-2 ">
+        <ListGroup className="rounded-0" id="wd-modules">
+          <ListGroup.Item className="wd-module p-0 fs-5 border-gray">
+            <div className="wd-title p-3 ps-2 bg-secondary d-flex justify-content-between align-center">
+              <div className="ms-3">
+                <BsGripVertical className="me-2 fs-3" /><FaCaretDown /> ASSIGNMENTS
               </div>
-              <RightSideAddition />
-            </ListGroup.Item>
-          ))
-        }
-      </ListGroup>
-    </Container>
+              <div className="ms-3 align-items-center">
+                <button className="rounded-pill me-3 bg-secondary border-opacity-50">
+                  40% of total
+                </button>
+                <button className="border-0 bg-secondary">
+                  <IoAddSharp></IoAddSharp>
+                </button>
+                <IoEllipsisVerticalOutline></IoEllipsisVerticalOutline>
+              </div>
+            </div>
+          </ListGroup.Item>
+          {assignments
+            .filter((assignment: any) => assignment.course === cid)
+            .map((assignment: any) => (
+              <ListGroup.Item className="d-flex justify-content-between align-items-center p-3 wd-lesson">
+                <div className="d-flex align-items-center">
+                  <AssignmentControll1 />
+                  <div className="mt-3">
+                    <div key={assignment._id} className="ms-3 assignment-item">
+                      <Link
+                        to={`/Kambaz/Courses/${cid}/Assignments/${assignment._id}/EditAssignment`}
+                        className="wd-assignment-link text-black text-decoration-none"
+                      >
+                        <strong>{assignment._id}</strong>
+                      </Link>
+                      <p className="wd-assignment-details mb-0">
+                        <span className="text-danger">{assignment.title}</span> |{" "}
+                        <b>Not Available until</b> {assignment.availableFrom} |
+                        <br />
+                        <b>Due </b>{assignment.dueDate} | {assignment.points} pts
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <AssignmentControll2 assignmentId={assignment._id}
+                  deleteAssignment={(assignmentId) => {
+                    dispatch(deleteAssignment(assignmentId));
+                  }}
+                   />
+              </ListGroup.Item>
+            ))}
+        </ListGroup>
+      </div>
+    </div>
   );
 }

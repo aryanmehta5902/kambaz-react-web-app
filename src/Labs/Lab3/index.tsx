@@ -31,11 +31,24 @@ import DestructingImports from "./DestructingImports";
 import Classes from "./Classes";
 import Styles from "./Styles";
 import PathParameters from "./PathParameters";
+import { useSelector } from "react-redux";
+import { ListGroup } from "react-bootstrap";
+
 export default function Lab3() {
   console.log('Hello World!');
+  const { todos } = useSelector((state: any) => state.todosReducer);
+
   return(
     <div id="wd-lab3" className="container">
       <h3>Lab 3 (JavaScript)</h3>
+      <ListGroup>
+        {todos.map((todo: any) => (
+          <ListGroup.Item key={todo.id}>
+            {todo.title}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
+      <hr />
       <VariablesAndConstants/>
       <VariableTypes/>
       <BooleanVariables/>
