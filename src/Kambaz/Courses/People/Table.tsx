@@ -22,7 +22,7 @@ export default function PeopleTable() {
         <tbody>
   {users
     .filter((usr) =>
-      enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid)
+      enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === Number(cid))
     )
     .map((user: any) => (
       <tr key={user._id}>
