@@ -19,7 +19,6 @@ export default function Dashboard({
   addNewCourse,
   deleteCourse,
   updateCourse,
-  fetchCourses
 }: DashboardProps) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentReducer);
@@ -48,15 +47,15 @@ export default function Dashboard({
     dispatch(enroll({ user: currentUser, course: enrollment }));
   }
 
-  const getEnrollmentId = (userId: string, courseId: string): string | null => {
-    const enrollment = enrollments.find(
-      (enrollment: any) =>
-        enrollment.user === userId &&
-        enrollment.course === courseId
-    );
+  // const getEnrollmentId = (userId: string, courseId: string): string | null => {
+  //   const enrollment = enrollments.find(
+  //     (enrollment: any) =>
+  //       enrollment.user === userId &&
+  //       enrollment.course === courseId
+  //   );
 
-    return enrollment ? enrollment._id : null;
-  };
+  //   return enrollment ? enrollment._id : null;
+  // };
 
   const newCourse = {
     _id: uuidv4(),
