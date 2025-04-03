@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
 import { Row, Col, Card, FormControl, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { unenroll, enroll, setEnrollments } from "./enrollmentReducer";
-import * as enrollmentClient from "./Courses/People/client";
+import { useState, useEffect } from "react";
+import { unenroll, enroll } from "./enrollmentReducer";
 import { v4 as uuidv4 } from 'uuid';
 
 interface DashboardProps {
@@ -23,40 +22,7 @@ export default function Dashboard({
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { enrollments } = useSelector((state: any) => state.enrollmentReducer);
   const dispatch = useDispatch();
-  const fetchEnrollments = async () => {
-    let enrollments = [];
-    try {
-      enrollments = await enrollmentClient.fetchAllEnrollments();
-    } catch (error) {
-      console.error(error);
-    }
-    dispatch(setEnrollments(enrollments));
-  };
-  useEffect(() => {
-    fetchEnrollments();
-  }, [currentUser]);
-
-  const removeEnrollment = async (enrollment: any) => {
-    await enrollmentClient.deleteEnrollment(enrollment._id);
-    dispatch(unenroll({ user: currentUser, course: enrollment }));
-  }
-
-  const makeEnrollment = async (enrollment: any) => {
-    await enrollmentClient.createNewEnrollment(enrollment);
-    console.log(enrollment);
-    dispatch(enroll({ user: currentUser, course: enrollment }));
-  }
-
-  // const getEnrollmentId = (userId: string, courseId: string): string | null => {
-  //   const enrollment = enrollments.find(
-  //     (enrollment: any) =>
-  //       enrollment.user === userId &&
-  //       enrollment.course === courseId
-  //   );
-
-  //   return enrollment ? enrollment._id : null;
-  // };
-
+  
   const newCourse = {
     _id: uuidv4(),
     title: "New Course",
@@ -67,10 +33,34 @@ export default function Dashboard({
     image: "images/reactjs.jpg",
   };
 
-  const isAdminOrFaculty = currentUser.role === "FACULTY" || currentUser.role === "ADMIN";
   const [course, setCourse] = useState(newCourse);
   const [showAll, setShowAll] = useState(false);
-  // console.log(courses);
+  
+  // Load the showAll state from sessionStorage on initial render
+  useEffect(() => {
+    const savedShowAll = sessionStorage.getItem('showAllCourses');
+    if (savedShowAll !== null) {
+      setShowAll(JSON.parse(savedShowAll));
+    }
+  }, []);
+
+  // Save showAll state to sessionStorage when it changes
+  useEffect(() => {
+    sessionStorage.setItem('showAllCourses', JSON.stringify(showAll));
+  }, [showAll]);
+
+  const isAdminOrFaculty = currentUser.role === "FACULTY" || currentUser.role === "ADMIN";
+
+  // Filter courses based on enrollment and showAll flag
+  const filteredCourses = showAll 
+    ? courses 
+    : courses.filter((course: any) =>
+        enrollments.some(
+          (enrollment: any) =>
+            enrollment.user === currentUser._id &&
+            enrollment.course === course._id
+        )
+      );
 
   const handleAddCourse = async () => {
     const updatedCourse = { ...course, _id: uuidv4(), image: "images/reactjs.jpg" };
@@ -86,11 +76,23 @@ export default function Dashboard({
   const handleDeleteCourse = async (courseId: string) => {
     await deleteCourse(courseId);
   };
-  console.log(currentUser)
+
+  const toggleShowAll = () => {
+    setShowAll(!showAll);
+  };
+
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard
-        {!isAdminOrFaculty && <Button className="float-end" onClick={() => setShowAll(!showAll)}>Enrollments</Button>}</h1>
+        {!isAdminOrFaculty && (
+          <Button 
+            className="float-end" 
+            onClick={toggleShowAll}
+          >
+            {showAll ? "Enrolled Courses" : "All Courses"}
+          </Button>
+        )}
+      </h1>
       <hr />
       {isAdminOrFaculty && (
         <>
@@ -120,22 +122,12 @@ export default function Dashboard({
       )}
 
       <h2 id="wd-dashboard-published">
-        Published Courses ({
-          showAll
-            ? courses.length
-            : courses.filter((course: any) =>
-              enrollments.some(
-                (enrollment: any) =>
-                  enrollment.user === currentUser._id &&
-                  enrollment.course === course._id
-              )
-            ).length
-        })
+        Published Courses ({filteredCourses.length})
       </h2>
       <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {courses.map((course: any) => (
+          {filteredCourses.map((course: any) => (
             <Col className="wd-dashboard-course" style={{ width: "300px" }} key={course._id}>
               <Card>
                 <Link to={`/Kambaz/Courses/${course._id}/Home`}
@@ -166,23 +158,23 @@ export default function Dashboard({
                         </Button>
                       </>}
                     {!isAdminOrFaculty && (
-                      enrollments.some((enrollment: any) => enrollment.user === currentUser._id && enrollment.course === course._id) ?
+                      enrollments.some((enrollment: any) => 
+                        enrollment.user === currentUser._id && enrollment.course === course._id
+                      ) ?
                         <Button className="btn btn-danger wd-card-delete-button" onClick={(e) => {
                           e.preventDefault();
-                          removeEnrollment(course);
-                        }
-                        }>Unenroll</Button>
+                          dispatch(unenroll({ user: currentUser, course }));
+                        }}>Unenroll</Button>
                         :
                         <Button className="btn btn-success wd-card-delete-button" onClick={(e) => {
                           e.preventDefault();
-                          makeEnrollment(course);
+                          dispatch(enroll({ user: currentUser, course }));
                         }}>Enroll</Button>
                     )}
                   </div>
                 </Link>
               </Card>
             </Col>
-
           ))}
         </Row>
       </div>
