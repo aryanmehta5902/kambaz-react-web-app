@@ -1,14 +1,12 @@
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import { useParams } from "react-router-dom";
-import * as db from "../../Database";
 import * as peopleClient from "./client";
-import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
 export default function PeopleTable() {
   const { cid } = useParams();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

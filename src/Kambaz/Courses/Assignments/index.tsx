@@ -9,7 +9,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { FaPlus } from "react-icons/fa";
 import ProtectedRoute from "../../ProtectedRoutes";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 interface AssignmentProps {
   assignments: any[];
@@ -21,7 +21,6 @@ interface AssignmentProps {
 
 export default function Assignments({
   assignments,
-  createNewAssignment,
   deleteAssignment,
   updateAssignment,
   fetchAssignment

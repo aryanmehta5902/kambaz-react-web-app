@@ -14,8 +14,7 @@ interface AssignmentControlButtonsProps {
 
 export default function AssignmentControlButtons({
   assignmentId,
-  deleteAssignment,
-  updateAssignment
+  deleteAssignment
 }: AssignmentControlButtonsProps) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { cid } = useParams();
