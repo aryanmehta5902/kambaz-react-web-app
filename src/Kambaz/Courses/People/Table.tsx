@@ -2,10 +2,23 @@ import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 import * as db from "../../Database";
+import * as peopleClient from "./client";
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from "react";
 
 export default function PeopleTable() {
   const { cid } = useParams();
-  const { users, enrollments } = db;
+  const dispatch = useDispatch();
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchEnrollments = async () => {
+      const enrolledUsers = await peopleClient.fetchAllEnrolledStudents(cid ? cid : "");
+      setUsers(enrolledUsers);
+    };
+
+    fetchEnrollments();
+  }, [cid]);
   return (
     <div id="wd-people-table">
       <Table striped>
@@ -20,11 +33,7 @@ export default function PeopleTable() {
           </tr>
         </thead>
         <tbody>
-  {users
-    .filter((usr) =>
-      enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === Number(cid))
-    )
-    .map((user: any) => (
+  {users.map((user: any) => (
       <tr key={user._id}>
         <td className="wd-full-name text-nowrap">
           <FaUserCircle className="me-2 fs-1 text-secondary" />

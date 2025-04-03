@@ -5,11 +5,17 @@ import { v4 as uuidv4 } from 'uuid';
 const initialState = {
     enrollments: enrollments,
 };
+
 const enrollmentsSlice = createSlice({
     name: "enrollments",
     initialState,
     reducers: {
+        setEnrollments: (state, action) => {
+            state.enrollments = action.payload;
+        },
         unenroll: (state, { payload: { user, course } }) => {
+            console.log("Before unenroll:", user, course);
+            
             state.enrollments = state.enrollments.filter((e) =>
                 !(e.course === course._id && e.user === user._id)
             );
@@ -28,7 +34,7 @@ const enrollmentsSlice = createSlice({
     },
 });
 
-export const { unenroll, enroll } =
+export const { unenroll, enroll, setEnrollments } =
     enrollmentsSlice.actions;
 
 export default enrollmentsSlice.reducer;

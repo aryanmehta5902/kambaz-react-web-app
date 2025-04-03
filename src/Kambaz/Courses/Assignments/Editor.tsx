@@ -1,33 +1,75 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import { RxCross1 } from "react-icons/rx";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addAssignment, updateAssignment } from "./AssignmentReducer";
-import { useSelector } from "react-redux";
 
-export default function AssignmentEditor() {
+interface AssignmentEditorProps {
+  createNewAssignment?: (assignment: any) => Promise<any>;
+  updateAssignment?: (assignment: any) => Promise<any>;
+  fetchAssignment?: () => Promise<any[]>;
+  assignments?: any[]; // Optional: If we want to pass assignments directly
+}
+
+export default function AssignmentEditor({
+  createNewAssignment,
+  updateAssignment,
+  fetchAssignment,
+  assignments = []
+}: AssignmentEditorProps) {
   const { cid, aid } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  
+  // State for loading data
+  const [loading, setLoading] = useState(false);
+  const [currentAssignments, setCurrentAssignments] = useState(assignments);
 
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const assignment = assignments.find(
-    (assignment: any) => assignment.course === cid && assignment._id === aid
-  );
+  // Form fields
+  const [description, setDescription] = useState("");
+  const [title, setTitle] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [points, setPoints] = useState("");
+  const [availableFrom, setAvailableFrom] = useState("");
+  const [availableUntil, setAvailableUntil] = useState("");
 
-  const [description, setDescription] = useState(assignment?.description || "");
-  const [title, setTitle] = useState(assignment?.title || "");
-  const [dueDate, setDueDate] = useState(assignment?.dueDate || "");
-  const [points, setPoints] = useState(assignment?.points || "");
-  const [availableFrom, setAvailableFrom] = useState(assignment?.availableFrom || "");
-  const [availableUntil, setAvailableUntil] = useState(assignment?.editorDueDate || "");
+  // Fetch assignments if needed and set up the form
+  useEffect(() => {
+    const loadData = async () => {
+      // If we don't have assignments and there's a fetchAssignment function
+      if (currentAssignments.length === 0 && fetchAssignment) {
+        setLoading(true);
+        try {
+          const fetchedAssignments = await fetchAssignment();
+          setCurrentAssignments(fetchedAssignments);
+        } catch (error) {
+          console.error("Error fetching assignments:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
 
-  const handleSave = ():void => {
-   
-    if (!aid) {
-      dispatch(addAssignment({
+      // Find the current assignment if we're editing
+      if (aid) {
+        const assignment = currentAssignments.find(
+          (a: any) => a.course === cid && a._id === aid
+        );
+
+        if (assignment) {
+          setDescription(assignment.description || "");
+          setTitle(assignment.title || "");
+          setDueDate(assignment.dueDate || "");
+          setPoints(assignment.points?.toString() || "");
+          setAvailableFrom(assignment.availableFrom || "");
+          setAvailableUntil(assignment.availableUntil || assignment.editorDueDate || "");
+        }
+      }
+    };
+
+    loadData();
+  }, [aid, cid, fetchAssignment, currentAssignments]);
+
+  const handleSave = async () => {
+    try {
+      const assignmentData = {
         description,
         title,
         course: cid,
@@ -35,22 +77,37 @@ export default function AssignmentEditor() {
         points: parseInt(points),
         availableFrom,
         availableUntil,
-      }));
-    } else {
-      dispatch(updateAssignment({
-        _id: aid,
-        description,
-        title,
-        course: cid,
-        dueDate,
-        points: parseInt(points),
-        availableFrom,
-        availableUntil,
-      }));
+      };
+
+      if (!aid) {
+        // Creating a new assignment
+        if (createNewAssignment) {
+          await createNewAssignment(assignmentData);
+        } else {
+          console.error("addNewAssignment function is not available");
+        }
+      } else {
+        // Updating an existing assignment
+        if (updateAssignment) {
+          await updateAssignment({
+            _id: aid,
+            ...assignmentData
+          });
+        } else {
+          console.error("updateAssignment function is not available");
+        }
+      }
+
+      // Navigate back to assignments list
+      navigate(`/Kambaz/Courses/${cid}/Assignments`);
+    } catch (error) {
+      console.error("Error saving assignment:", error);
     }
-
-    navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div id="wd-assignments-editor">
@@ -225,7 +282,7 @@ export default function AssignmentEditor() {
                 <Button variant="secondary" id="wd-button-cancel" className="me-3" onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments`)}> 
                   Cancel
                 </Button>
-                <Button variant="danger" id="wd-button-save" onClick={() => handleSave()}>
+                <Button variant="danger" id="wd-button-save" onClick={handleSave}>
                   Save
                 </Button>
               </Col>

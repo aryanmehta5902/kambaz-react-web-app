@@ -1,19 +1,63 @@
+import { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import { RxCross1 } from "react-icons/rx";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-export default function AssignmentEditorViewOnly() {
+
+interface AssignmentEditorViewOnlyProps {
+  updateAssignment?: (assignment: any) => Promise<any>;
+  fetchAssignment?: () => Promise<any[]>;
+  assignments?: any[]; // Optional: If we want to pass assignments directly
+}
+
+export default function AssignmentEditorViewOnly({
+  fetchAssignment,
+  assignments = []
+}: AssignmentEditorViewOnlyProps) {
   const { cid, aid } = useParams();
-
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const assignment = assignments.find(
-    (assignment: any) => assignment.course === cid && assignment._id === aid
-  );
-
   const navigate = useNavigate();
+  
+  // State for loading and assignments
+  const [loading, setLoading] = useState(false);
+  const [currentAssignments, setCurrentAssignments] = useState(assignments);
+  const [assignment, setAssignment] = useState<any>(null);
+
+  // Fetch assignments if needed
+  useEffect(() => {
+    const loadData = async () => {
+      // If we don't have assignments and there's a fetchAssignment function
+      if (currentAssignments.length === 0 && fetchAssignment) {
+        setLoading(true);
+        try {
+          const fetchedAssignments = await fetchAssignment();
+          setCurrentAssignments(fetchedAssignments);
+        } catch (error) {
+          console.error("Error fetching assignments:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+      
+      // Find the current assignment
+      const foundAssignment = currentAssignments.find(
+        (a: any) => a.course === cid && a._id === aid
+      );
+      
+      if (foundAssignment) {
+        setAssignment(foundAssignment);
+      }
+    };
+
+    loadData();
+  }, [aid, cid, fetchAssignment, currentAssignments]);
+
   const handleNavigation = () => {
     navigate(`/Kambaz/Courses/${cid}/Assignments`);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div id="wd-assignments-editor">
       <Row>
@@ -28,8 +72,6 @@ export default function AssignmentEditorViewOnly() {
               <Form.Label>Description</Form.Label>
               <Form.Control type="text" defaultValue={assignment?.description || ""} disabled/>
             </Form.Group>
-
-      
 
             <Row className="mt-3">
               <Col sm={6}>
@@ -162,7 +204,7 @@ export default function AssignmentEditorViewOnly() {
                   <Col>
                     <Form.Group controlId="wd-due-date">
                       <Form.Label><strong>Due </strong></Form.Label>
-                      <Form.Control type="date" defaultValue={assignment?.editorDueDate || ""} disabled/>
+                      <Form.Control type="date" defaultValue={assignment?.dueDate || assignment?.editorDueDate || ""} disabled/>
                     </Form.Group>
                   </Col>
                 </Row>
@@ -170,13 +212,13 @@ export default function AssignmentEditorViewOnly() {
                   <Col sm={6}>
                     <Form.Group controlId="wd-available-from">
                       <Form.Label><strong>Available From</strong></Form.Label>
-                      <Form.Control type="date" defaultValue={assignment?.editorAvailableFrom || ""} disabled/>
+                      <Form.Control type="date" defaultValue={assignment?.availableFrom || assignment?.editorAvailableFrom || ""} disabled/>
                     </Form.Group>
                   </Col>
                   <Col sm={6}>
                     <Form.Group controlId="wd-available-until">
                       <Form.Label><strong>Until</strong></Form.Label>
-                      <Form.Control type="date" defaultValue={assignment?.editorDueDate || ""} disabled/>
+                      <Form.Control type="date" defaultValue={assignment?.availableUntil || assignment?.editorDueDate || ""} disabled/>
                     </Form.Group>
                   </Col>
                 </Row>

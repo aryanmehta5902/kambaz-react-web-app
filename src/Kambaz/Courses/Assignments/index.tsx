@@ -6,27 +6,52 @@ import { IoAddSharp } from "react-icons/io5";
 import AssignmentControll1 from "./AssignmentControlLeft";
 import AssignmentControll2 from "./AssignmentControlButtons";
 import { Link, useNavigate, useParams } from "react-router";
-import { deleteAssignment } from "./AssignmentReducer";
-import { useSelector, useDispatch } from "react-redux";
-
 import { HiMagnifyingGlass } from "react-icons/hi2";
 import { FaPlus } from "react-icons/fa";
 import ProtectedRoute from "../../ProtectedRoutes";
+import { useState, useEffect } from "react";
 
+interface AssignmentProps {
+  assignments: any[];
+  createNewAssignment: (assignment: any) => Promise<any>;
+  deleteAssignment: (assignmentId: any) => Promise<any>;
+  updateAssignment: (assignment: any) => Promise<any>;
+  fetchAssignment: () => Promise<any[]>;
+}
 
-
-export default function Assignments() {
+export default function Assignments({
+  assignments,
+  createNewAssignment,
+  deleteAssignment,
+  updateAssignment,
+  fetchAssignment
+}: AssignmentProps) {
   console.log("here 1");
   
   const { cid } = useParams();
-
-  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleAddAssignment = () => {
   
+  // Use useEffect to fetch assignments when component mounts
+  useEffect(() => {
+    const loadAssignments = async () => {
+      try {
+        await fetchAssignment();
+      } catch (error) {
+        console.error("Error fetching assignments:", error);
+      }
+    };
+    
+    loadAssignments();
+  }, []);
+  
+  const handleAddAssignment = () => {
+    // Navigate to the editor page
     navigate(`/Kambaz/Courses/${cid}/AssignmentEditor`);
+    
+    // Note: The actual addNewAssignment function would be called 
+    // in the AssignmentEditor component after the form submission
   };
+  
   return (
     <div id="wd-assignments">
  
@@ -75,11 +100,11 @@ export default function Assignments() {
           {assignments
             .filter((assignment: any) => assignment.course === cid)
             .map((assignment: any) => (
-              <ListGroup.Item className="d-flex justify-content-between align-items-center p-3 wd-lesson">
+              <ListGroup.Item key={assignment._id} className="d-flex justify-content-between align-items-center p-3 wd-lesson">
                 <div className="d-flex align-items-center">
                   <AssignmentControll1 />
                   <div className="mt-3">
-                    <div key={assignment._id} className="ms-3 assignment-item">
+                    <div className="ms-3 assignment-item">
                       <Link
                         to={`/Kambaz/Courses/${cid}/Assignments/${assignment._id}/EditAssignment`}
                         className="wd-assignment-link text-black text-decoration-none"
@@ -95,11 +120,11 @@ export default function Assignments() {
                     </div>
                   </div>
                 </div>
-                <AssignmentControll2 assignmentId={assignment._id}
-                  deleteAssignment={(assignmentId) => {
-                    dispatch(deleteAssignment(assignmentId));
-                  }}
-                   />
+                <AssignmentControll2 
+                  assignmentId={assignment._id}
+                  deleteAssignment={deleteAssignment}
+                  updateAssignment={updateAssignment}
+                />
               </ListGroup.Item>
             ))}
         </ListGroup>

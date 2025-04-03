@@ -19,6 +19,7 @@ import BootstrapLists from "./BootstrapLists";
 import BootstrapNavigation from "./BootstrapNavigation";
 import BootstrapTables from "./BootstrapTables";
 import ScreenSizeLabel from "./ScreenSizeLabel";
+
 export default function Lab2() {
   return (
     <Container>
