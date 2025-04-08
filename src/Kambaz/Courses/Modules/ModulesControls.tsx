@@ -4,27 +4,29 @@ import { Button, Dropdown } from "react-bootstrap";
 import { MdOutlineCancel } from "react-icons/md";
 import ModuleEditor from "./ModuleEditor";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function ModulesControls({ moduleName, setModuleName, addModule }:
   { moduleName: string; setModuleName: (title: string) => void; addModule: () => void; }) {
-   const [show, setShow] = useState(false);
-   const handleClose = () => setShow(false);
-   const handleShow = () => setShow(true);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const isAdminOrFaculty = currentUser.role === "FACULTY" || currentUser.role === "ADMIN";
   return (
     <div id="wd-modules-controls" className="text-nowrap">
-      {/* Add Module Button */}
-      <Button
-        variant="danger"
-        onClick={handleShow}
-        size="lg"
-        className="me-1 float-end"
-        id="wd-add-module-btn"
-      >
-        <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-        Module
-      </Button>
-
-      {/* Publish Dropdown */}
+      {isAdminOrFaculty && (
+        <Button
+          variant="danger"
+          onClick={handleShow}
+          size="lg"
+          className="me-1 float-end"
+          id="wd-add-module-btn"
+        >
+          <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+          Module
+        </Button>
+      )}
       <Dropdown className="float-end me-2">
         <Dropdown.Toggle variant="secondary" size="lg" id="wd-publish-all-btn">
           <GreenCheckmark /> Publish All
@@ -39,19 +41,19 @@ export default function ModulesControls({ moduleName, setModuleName, addModule }
           <Dropdown.Item id="wd-publish-modules-only">
             <GreenCheckmark /> Publish modules only
           </Dropdown.Item>
-         
+
           <Dropdown.Item id="wd-unpublish-all-modules-and-items">
-          <MdOutlineCancel/>
-             Unpublish all modules and items
+            <MdOutlineCancel />
+            Unpublish all modules and items
           </Dropdown.Item>
           <Dropdown.Item id="wd-unpublish-modules-only">
-            <MdOutlineCancel/>
+            <MdOutlineCancel />
             Unpublish modules only
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
 
-    
+
       <Button
         variant="secondary"
         size="lg"
@@ -61,7 +63,7 @@ export default function ModulesControls({ moduleName, setModuleName, addModule }
         View Progress
       </Button>
 
-      
+
       <Button
         variant="secondary"
         size="lg"
@@ -71,7 +73,7 @@ export default function ModulesControls({ moduleName, setModuleName, addModule }
         Collapse All
       </Button>
       <ModuleEditor show={show} handleClose={handleClose} dialogTitle="Add Module"
-       moduleName={moduleName} setModuleName={setModuleName} addModule={addModule} />
+        moduleName={moduleName} setModuleName={setModuleName} addModule={addModule} />
     </div>
   );
 }
