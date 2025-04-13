@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Form, Button, Row, Col, Table } from "react-bootstrap";
 import { RxCross1 } from "react-icons/rx";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // Fixed import
 
 interface AssignmentEditorProps {
   createNewAssignment?: (assignment: any) => Promise<any>;
@@ -30,6 +30,7 @@ export default function AssignmentEditor({
   const [points, setPoints] = useState("");
   const [availableFrom, setAvailableFrom] = useState("");
   const [availableUntil, setAvailableUntil] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   // Fetch assignments if needed and set up the form
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function AssignmentEditor({
           setCurrentAssignments(fetchedAssignments);
         } catch (error) {
           console.error("Error fetching assignments:", error);
+          setErrorMessage("Failed to load assignments. Please try again.");
         } finally {
           setLoading(false);
         }
@@ -67,7 +69,22 @@ export default function AssignmentEditor({
     loadData();
   }, [aid, cid, fetchAssignment, currentAssignments]);
 
+  const validateForm = () => {
+    if (!title.trim()) {
+      setErrorMessage("Assignment name is required");
+      return false;
+    }
+    if (!points || isNaN(Number(points)) || Number(points) <= 0) {
+      setErrorMessage("Points must be a positive number");
+      return false;
+    }
+    setErrorMessage("");
+    return true;
+  };
+
   const handleSave = async () => {
+    if (!validateForm()) return;
+    
     try {
       const assignmentData = {
         description,
@@ -84,7 +101,9 @@ export default function AssignmentEditor({
         if (createNewAssignment) {
           await createNewAssignment(assignmentData);
         } else {
-          console.error("addNewAssignment function is not available");
+          console.error("createNewAssignment function is not available");
+          setErrorMessage("Unable to create assignment. Function not available.");
+          return;
         }
       } else {
         // Updating an existing assignment
@@ -95,6 +114,8 @@ export default function AssignmentEditor({
           });
         } else {
           console.error("updateAssignment function is not available");
+          setErrorMessage("Unable to update assignment. Function not available.");
+          return;
         }
       }
 
@@ -102,6 +123,7 @@ export default function AssignmentEditor({
       navigate(`/Kambaz/Courses/${cid}/Assignments`);
     } catch (error) {
       console.error("Error saving assignment:", error);
+      setErrorMessage("Failed to save assignment. Please try again.");
     }
   };
 
@@ -113,6 +135,9 @@ export default function AssignmentEditor({
     <div id="wd-assignments-editor">
       <Row>
         <Col sm={10}>
+          {errorMessage && (
+            <div className="alert alert-danger">{errorMessage}</div>
+          )}
           <Form>
             <Form.Group controlId="wd-name">
               <Form.Label>Assignment Name</Form.Label>

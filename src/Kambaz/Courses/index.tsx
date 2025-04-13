@@ -17,11 +17,12 @@ import { useSelector } from "react-redux";
 import Settings from "../Settings";
 import * as assignmentClient from "./Assignments/client";
 
-export default function Courses({ courses }: { courses: any[]; }) {
+export default function Courses({ courses = [] }: { courses?: any[]; }) {
   const { cid } = useParams();
-  const course = courses.find((course) => course._id === Number(cid)); 
+  // Add defensive check for courses array and proper type conversion
+  const course = courses?.find((course) => course && course._id === (isNaN(Number(cid)) ? cid : Number(cid)));
   const { pathname } = useLocation();
-  const currentSection = pathname.split("/")[4];
+  const currentSection = pathname.split("/")[4] || "Home";
 
   const [assignments, setAssignments] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -42,7 +43,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
     try {
       const fetchedAssignments = await assignmentClient.fetchAllAssignments();
       // console.log(fetchedAssignments);
-      setAssignments(fetchedAssignments);
+      setAssignments(fetchedAssignments.filter((assignment: any) => assignment !== null && assignment !== undefined));
       return fetchedAssignments;
     } catch (error) {
       console.error(error);
@@ -70,7 +71,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
     <div id="wd-courses">
       <h2 className="text-danger">
         <FaAlignJustify className="me-4 fs-4 mb-1" />
-        {course && course.title} &gt; {currentSection}
+        {course ? `${course.title} > ${currentSection}` : `Course Not Found > ${currentSection}`}
       </h2>
       <hr />
       <div className="d-flex">
