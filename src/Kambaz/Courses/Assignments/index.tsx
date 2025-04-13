@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+
+
 import { Button, ListGroup } from "react-bootstrap";
 import { FaCaretDown } from "react-icons/fa6";
 import { BsGripVertical } from "react-icons/bs";
@@ -21,14 +24,16 @@ interface AssignmentProps {
 
 export default function Assignments({
   assignments,
-  createNewAssignment, // Added missing prop
+  // createNewAssignment, // Added missing prop
   deleteAssignment,
   updateAssignment,
   fetchAssignment
 }: AssignmentProps) {
   const { cid } = useParams();
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const [filteredAssignments, setFilteredAssignments] = useState<any[]>([]);
+  // eslint-disable-next-line no-unused-vars
   const [searchTerm, setSearchTerm] = useState("");
   
   // Use useEffect to fetch assignments when component mounts

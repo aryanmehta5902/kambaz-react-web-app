@@ -4,9 +4,9 @@ import { BsGripVertical } from "react-icons/bs";
 import { useParams } from "react-router";
 import ModulesControls from "./ModulesControls";
 import { useState, useEffect } from "react";
-import { FormControl } from "react-bootstrap";
+// import { FormControl } from "react-bootstrap";
 import { setModules, addModule, editModule, updateModule, deleteModule } from "./reducer";
-import * as coursesClient from "../client";
+// import * as coursesClient from "../client";
 import * as modulesClient from "./client";
 import * as courseClient from "../client";
 
@@ -18,10 +18,10 @@ export default function Modules() {
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
 
-  const saveModule = async (module: any) => {
-    await modulesClient.updateModule(module);
-    dispatch(updateModule(module));
-  };
+  // const saveModule = async (module: any) => {
+  //   await modulesClient.updateModule(module);
+  //   dispatch(updateModule(module));
+  // };
 
   const addModuleHandler = async () => {
     const newModule = await courseClient.createModuleForCourse(cid!, {
@@ -32,17 +32,17 @@ export default function Modules() {
     setModuleName("");
   };
 
-  const removeModule = async (moduleId: string) => {
-    await modulesClient.deleteModule(moduleId);
-    dispatch(deleteModule(moduleId));
-  };
+  // const removeModule = async (moduleId: string) => {
+  //   await modulesClient.deleteModule(moduleId);
+  //   dispatch(deleteModule(moduleId));
+  // };
 
-  const createModuleForCourse = async () => {
-    if (!cid) return;
-    const newModule = { name: moduleName, course: cid };
-    const module = await coursesClient.createModuleForCourse(cid, newModule);
-    dispatch(addModule(module));
-  };
+  // const createModuleForCourse = async () => {
+  //   if (!cid) return;
+  //   const newModule = { name: moduleName, course: cid };
+  //   const module = await coursesClient.createModuleForCourse(cid, newModule);
+  //   dispatch(addModule(module));
+  // };
 
   const fetchModulesForCourse = async () => {
     const modules = await courseClient.findModulesForCourse(cid!);
