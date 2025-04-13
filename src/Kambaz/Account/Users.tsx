@@ -11,6 +11,8 @@ export default function Users() {
  const [role, setRole] = useState("");
  // eslint-disable-next-line no-unused-vars
  const [name, setName] = useState("");
+ console.log(name);
+ 
  const filterUsersByName = async (name: string) => {
    setName(name);
    if (name) {

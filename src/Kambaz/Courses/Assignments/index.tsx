@@ -33,8 +33,11 @@ export default function Assignments({
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [filteredAssignments, setFilteredAssignments] = useState<any[]>([]);
+  console.log(filteredAssignments);
+  
   // eslint-disable-next-line no-unused-vars
   const [searchTerm, setSearchTerm] = useState("");
+  console.log(setSearchTerm);
   
   // Use useEffect to fetch assignments when component mounts
   useEffect(() => {
